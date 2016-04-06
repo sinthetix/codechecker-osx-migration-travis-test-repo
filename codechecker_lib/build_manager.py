@@ -10,9 +10,11 @@ import os
 import sys
 import pickle
 import subprocess
+import shutil
 
 from codechecker_lib import logger
 from codechecker_lib import analyzer_env
+from codechecker_lib import host_check
 
 LOG = logger.get_new_logger('BUILD MANAGER')
 
@@ -37,11 +39,20 @@ def perform_build_command(logfile, command, context, silent=False):
         original_env = os.environ.copy()
 
     return_code = 0
-    # Run user's commands in shell
-    log_env = analyzer_env.get_log_env(logfile, context, original_env)
 
-    if 'CC_LOGGER_GCC_LIKE' not in log_env:
-      log_env['CC_LOGGER_GCC_LIKE'] = 'gcc:g++:clang:clang++:cc:c++'
+    # Run user's commands with intercept
+    if host_check.check_intercept(original_env):
+        LOG.info("  with intercept ...")
+        original_command = command
+        command = "sudo intercept-build " + original_command
+        log_env = original_env
+
+    # Run user's commands in shell
+    else:
+        LOG.info("  with ld logger ...")
+        log_env = analyzer_env.get_log_env(logfile, context, original_env)
+        if 'CC_LOGGER_GCC_LIKE' not in log_env:
+            log_env['CC_LOGGER_GCC_LIKE'] = 'gcc:g++:clang:clang++:cc:c++'
 
     LOG.debug_analyzer(log_env)
     try:
@@ -59,6 +70,10 @@ def perform_build_command(logfile, command, context, silent=False):
                 break
 
         return_code = proc.returncode
+
+        command_json_path = os.path.join(os.getcwd(), 'compile_commands.json')
+        shutil.copyfile(command_json_path, logfile)
+        os.remove(command_json_path)
 
         if not silent:
             if return_code == 0:
@@ -113,6 +128,7 @@ def generate_log_file(args, context, silent=False):
     log_file = None
     try:
         if args.command:
+            '''
             # check if logger bin exists
             if not os.path.isfile(context.path_logger_bin):
                 LOG.debug_analyzer('Logger binary not found! Required for logging.')
@@ -123,6 +139,7 @@ def generate_log_file(args, context, silent=False):
                 LOG.debug_analyzer('Logger library directory not found! Libs are requires' \
                           'for logging.')
                 sys.exit(1)
+            '''
 
             log_file = default_compilation_db(args.workspace)
             if os.path.exists(log_file):
