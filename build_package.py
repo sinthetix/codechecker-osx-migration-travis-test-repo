@@ -18,6 +18,8 @@ import subprocess
 import time
 import shlex
 
+from distutils.spawn import find_executable
+
 LOG = logging.getLogger('Packager')
 
 msg_formatter = logging.Formatter('[%(levelname)s] - %(message)s')
@@ -190,6 +192,13 @@ def handle_external_file(dep, clean, env, verbose):
     download_cmd.extend(shlex.split(source_package['download_cmd']))
     file_url = source_package['url']
     download_cmd.append(file_url)
+
+    option = source_package['option']
+    download_cmd.append(option)
+
+    file_name = source_package['name']
+    download_cmd.append(file_name)
+
     LOG.info('Downloading ...')
     if run_cmd(download_cmd, directory, env, verbose):
         LOG.error('Failed to get dependency')
@@ -207,6 +216,7 @@ def handle_external_file(dep, clean, env, verbose):
             file_name = os.path.join(directory, file_name)
             with tarfile.open(file_name) as tar:
                 tar.extractall(directory)
+            os.remove(file_name)
         else:
             LOG.error('Unsupported file type')
     elif file_ext in supported_exts['uncompressed']:
@@ -353,7 +363,23 @@ def build_package(repository_root, build_package_config, env=None):
     # create package folder layout
     create_folder_layout(output_dir, package_layout)
 
+    # check scan-build-py (intercept) && symlink
+    LOG.info('Checking source: llvm scan-build-py (intercept)')
+
+    intercept_build_executable = find_executable('intercept-build')
+    
+    if intercept_build_executable != None:
+
+        bin_directory = os.path.join(output_dir, 'CodeChecker', 'bin', 'intercept')
+
+        os.symlink(intercept_build_executable, bin_directory)
+
+        LOG.info('Available.')
+    else:
+        LOG.error('Not exists...')
+
     # build ld logger
+    '''
     ld_logger_path = build_package_config['ld_logger_path']
     if ld_logger_path:
         ld_logger_build = os.path.join(ld_logger_path, 'build')
@@ -389,6 +415,7 @@ def build_package(repository_root, build_package_config, env=None):
 
     else:
         LOG.info('Skipping ld logger from package')
+    '''
 
     # generate gen files with thrift
     thrift_files_dir = os.path.join(repository_root, 'thrift_api')
