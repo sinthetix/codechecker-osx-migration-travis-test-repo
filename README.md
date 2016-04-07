@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/Ericsson/codechecker.svg?branch=master)](https://travis-ci.org/Ericsson/codechecker)
+[![Build Status](https://travis-ci.org/tmsblgh/codechecker-osx-migration.svg?branch=master)](https://travis-ci.org/tmsblgh/codechecker-osx-migration)
 -----
 # Introduction
 CodeChecker is a static analysis infrastructure built on [Clang Static Analyzer](http://clang-analyzer.llvm.org/).  
