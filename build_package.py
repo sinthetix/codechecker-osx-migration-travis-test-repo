@@ -17,6 +17,7 @@ import tarfile
 import subprocess
 import time
 import shlex
+import platform
 
 from distutils.spawn import find_executable
 
@@ -376,46 +377,45 @@ def build_package(repository_root, build_package_config, env=None):
 
         LOG.info('Available.')
     else:
-        LOG.error('Not exists...')
+        LOG.error('Not exists, build ld logger in Linux only')
+        # build ld logger because intercept is not available
+        if platform.system() == 'Linux':
+            ld_logger_path = build_package_config['ld_logger_path']
+            if ld_logger_path:
+                ld_logger_build = os.path.join(ld_logger_path, 'build')
 
-    # build ld logger
-    '''
-    ld_logger_path = build_package_config['ld_logger_path']
-    if ld_logger_path:
-        ld_logger_build = os.path.join(ld_logger_path, 'build')
+                ld_logger32 = build_package_config.get('ld_logger_32')
+                ld_logger64 = build_package_config.get('ld_logger_64')
+                rebuild = build_package_config.get('rebuild_ld_logger') or clean
 
-        ld_logger32 = build_package_config.get('ld_logger_32')
-        ld_logger64 = build_package_config.get('ld_logger_64')
-        rebuild = build_package_config.get('rebuild_ld_logger') or clean
+                arch = None
+                if ld_logger32 == ld_logger64:
+                    # build both versions
+                    pass
+                elif ld_logger32:
+                    arch = '32'
+                elif ld_logger64:
+                    arch = '64'
 
-        arch = None
-        if ld_logger32 == ld_logger64:
-            # build both versions
-            pass
-        elif ld_logger32:
-            arch = '32'
-        elif ld_logger64:
-            arch = '64'
+                if build_ld_logger(ld_logger_path, env, arch, rebuild, verbose):
+                    LOG.error('Failed to build ld logger')
+                    sys.exit()
 
-        if build_ld_logger(ld_logger_path, env, arch, rebuild, verbose):
-            LOG.error('Failed to build ld logger')
-            sys.exit()
+                # copy ld logger files
+                target = os.path.join(package_root, package_layout['ld_logger'])
 
-        # copy ld logger files
-        target = os.path.join(package_root, package_layout['ld_logger'])
+                copy_tree(ld_logger_build, target)
 
-        copy_tree(ld_logger_build, target)
+                curr_dir = os.getcwd()
+                os.chdir(os.path.join(package_root, package_layout['bin']))
+                logger_symlink = os.path.join('../', package_layout['ld_logger'],
+                                              'bin', 'ldlogger')
+                os.symlink(logger_symlink, 'ldlogger')
+                os.chdir(curr_dir)
 
-        curr_dir = os.getcwd()
-        os.chdir(os.path.join(package_root, package_layout['bin']))
-        logger_symlink = os.path.join('../', package_layout['ld_logger'],
-                                      'bin', 'ldlogger')
-        os.symlink(logger_symlink, 'ldlogger')
-        os.chdir(curr_dir)
-
-    else:
-        LOG.info('Skipping ld logger from package')
-    '''
+            else:
+                LOG.info('Skipping ld logger from package')
+    
 
     # generate gen files with thrift
     thrift_files_dir = os.path.join(repository_root, 'thrift_api')
