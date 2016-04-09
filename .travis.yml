@@ -20,7 +20,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv venv -p python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar tvf clang+llvm-3.7.0-x86_64-apple-darwin.tar.xz clang+llvm-3.7.0-x86_64-apple-darwin/lib/libclang.dylib; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install llvm --with-clang --with-clang-extra-tools; fi
 
 install:
     - pip install -r ./.ci/python_requirements
