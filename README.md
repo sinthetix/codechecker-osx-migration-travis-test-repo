@@ -39,7 +39,7 @@ If your clang version does not have these features you will see in debug log the
 Tested on OS X El Capitan 10.11.4
 ~~~~~~{.sh}
 
-# On El Capitan System Integrity Protection (SIP) need to Turn off
+# nn El Capitan System Integrity Protection (SIP) need to turn off
 - Click the  menu.
 - Select Restart...
 - Hold down command-R to boot into the Recovery System.
@@ -48,7 +48,7 @@ Tested on OS X El Capitan 10.11.4
 - Close the Terminal app.
 - Click the  menu and select Restart....
 
-# Check out and build Clang with extra tools
+# check out and build clang with extra tools
 How to: http://clang.llvm.org/get_started.html
 
 # get dependencies
@@ -84,11 +84,6 @@ available in the PATH
   },
 ```
 
-#### Activate virtualenv
-~~~~~~{.sh}
-source ~/checker_env/bin/activate
-~~~~~~
-
 #### Add package bin directory to PATH.
 This step can be skipped if you always give the path of CodeChecker command.
 ~~~~~~{.sh}
@@ -96,10 +91,9 @@ export PATH=~/codechecker_package/CodeChecker/bin:$PATH
 ~~~~~~
 
 #### Add package bin directory to PATH.
-This is need for Clang-Tidy and Scan-build-Py
+This is need for scan-build-py (intercept-build)
 ~~~~~~{.sh}
 export PATH=~/{user path}/llvm/tools/clang/tools/scan-build-py/bin:$PATH
-export PATH=~/{user path}/build/bin:$PATH
 ~~~~~~
 
 #### Check the project

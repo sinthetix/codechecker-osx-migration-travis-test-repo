@@ -370,11 +370,6 @@ def build_package(repository_root, build_package_config, env=None):
     intercept_build_executable = find_executable('intercept-build')
     
     if intercept_build_executable != None:
-
-        bin_directory = os.path.join(output_dir, 'CodeChecker', 'bin', 'intercept')
-
-        os.symlink(intercept_build_executable, bin_directory)
-
         LOG.info('Available.')
     else:
         LOG.error('Not exists, build ld logger in Linux only')
