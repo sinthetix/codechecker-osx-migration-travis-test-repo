@@ -34,6 +34,44 @@ If your clang version does not have these features you will see in debug log the
   * `Hash value wasn't found in the plist file.` --> update for a newer clang version; otherwise CodeChecker generates a simple hash based on the filename and the line content, this method is applied for Clang Tidy results too, because Clang Tidy does not support bug identifier hash generation currently
 
 ## OS X
+For a more detailed dependency list see [Requirements](docs/deps.md)
+### Basic dependecy install & setup
+Tested on Mac OS X 10.11.4
+~~~~~~{.sh}
+
+# On El Capitan System Integrity Protection (SIP) need to Turn off
+- Click the  menu.
+- Select Restart...
+- Hold down command-R to boot into the Recovery System.
+- Click the Utilities menu and select Terminal.
+- Type csrutil disable and press return.
+- Close the Terminal app.
+- Click the  menu and select Restart....
+
+# Check out and build Clang with extra tools
+How to: http://clang.llvm.org/get_started.html
+
+# get dependencies
+brew update
+brew install doxygen thrift gcc git
+
+# get source code
+git clone https://github.com/tmsblgh/codechecker-osx-migration-travis-test-repo.git
+cd codechecker
+
+# install required basic python modules
+pip install -r .ci/basic_python_requirements
+
+# add directories to PATH
+export PATH=/Users/tamasbalogh/Documents/llvm/tools/clang/tools/scan-build-py/bin:$PATH
+export PATH=~/Documents/build/bin:$PATH
+export PATH=~/codechecker_package/CodeChecker/bin:$PATH
+
+# create codechecker package
+./build_package.py -o ~/codechecker_package
+cd ..
+~~~~~~
+
 
 ## Linux
 For a more detailed dependency list see [Requirements](docs/deps.md)
