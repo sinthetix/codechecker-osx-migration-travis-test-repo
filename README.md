@@ -34,9 +34,9 @@ If your clang version does not have these features you will see in debug log the
   * `Hash value wasn't found in the plist file.` --> update for a newer clang version; otherwise CodeChecker generates a simple hash based on the filename and the line content, this method is applied for Clang Tidy results too, because Clang Tidy does not support bug identifier hash generation currently
 
 ## OS X
-For a more detailed dependency list see [Requirements](docs/deps.md)
+
 ### Basic dependecy install & setup
-Tested on Mac OS X 10.11.4
+Tested on OS X El Capitan 10.11.4
 ~~~~~~{.sh}
 
 # On El Capitan System Integrity Protection (SIP) need to Turn off
