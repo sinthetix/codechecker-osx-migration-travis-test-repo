@@ -19,7 +19,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv venv -p python; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-apple-darwin.tar.xz -o clang+llvm-3.7.0-x86_64-apple-darwin.tar.xz; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then curl http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-apple-darwin.tar.xz -o clang+llvm-3.8.0-x86_64-apple-darwin.tar.xz; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then tar -xzf clang+llvm-3.8.0-x86_64-apple-darwin.tar.xz; fi
 
 install:
