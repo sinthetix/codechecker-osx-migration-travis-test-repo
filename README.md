@@ -62,15 +62,68 @@ cd codechecker
 # install required basic python modules
 pip install -r .ci/basic_python_requirements
 
-# add directories to PATH
-export PATH=/Users/tamasbalogh/Documents/llvm/tools/clang/tools/scan-build-py/bin:$PATH
-export PATH=~/Documents/build/bin:$PATH
-export PATH=~/codechecker_package/CodeChecker/bin:$PATH
-
 # create codechecker package
 ./build_package.py -o ~/codechecker_package
 cd ..
 ~~~~~~
+
+### Check a test project
+#### Check if clang or clang tidy is available
+~~~~~~{.sh}
+which clang
+which clang-tidy
+~~~~~~
+If 'clang' or 'clang-tidy' commands are not available the package can be configured to use another/newer clang binary for the analisys.  
+Edit the 'CodeChecker/config/package_layout.json' config files "runtime/analyzers"
+section in the generated package and modify the analyzers section to the analyzers
+available in the PATH
+```
+"analyzers" : {
+  "clangsa" : "clang-3.6",
+  "clang-tidy" : "clang-tidy-3.6"
+  },
+```
+
+#### Activate virtualenv
+~~~~~~{.sh}
+source ~/checker_env/bin/activate
+~~~~~~
+
+#### Add package bin directory to PATH.
+This step can be skipped if you always give the path of CodeChecker command.
+~~~~~~{.sh}
+export PATH=~/codechecker_package/CodeChecker/bin:$PATH
+~~~~~~
+
+#### Add package bin directory to PATH.
+This is need for Clang-Tidy and Scan-build-Py
+~~~~~~{.sh}
+export PATH=~/{user path}/llvm/tools/clang/tools/scan-build-py/bin:$PATH
+export PATH=~/{user path}/build/bin:$PATH
+~~~~~~
+
+#### Check the project
+Check the project using SQLite. The database is placed in the working
+directory which can be provided by -w flag (~/.codechecker by default).
+~~~~~~{.sh}
+CodeChecker check -n test_project_check -b "cd my_test_project && make clean && make"
+~~~~~~
+
+#### Start web server to view the results
+~~~~~~{.sh}
+CodeChecker server
+~~~~~~
+
+#### View the results with firefox
+~~~~~~{.sh}
+firefox http://localhost:8001
+~~~~~~
+
+If all goes well you can check analysis results in your web browser:
+
+![CodeChecker Viewer](https://raw.githubusercontent.com/Ericsson/codechecker/master/docs/images/viewer.png)
+
+See user guide for further configuration and check options.
 
 
 ## Linux
