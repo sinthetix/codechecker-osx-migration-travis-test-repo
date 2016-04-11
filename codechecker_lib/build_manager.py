@@ -11,12 +11,11 @@ import sys
 import pickle
 import subprocess
 import shutil
+import platform
 
 from codechecker_lib import logger
 from codechecker_lib import analyzer_env
 from codechecker_lib import host_check
-
-from distutils.spawn import find_executable
 
 LOG = logger.get_new_logger('BUILD MANAGER')
 
@@ -42,21 +41,15 @@ def perform_build_command(logfile, command, context, silent=False):
 
     return_code = 0
 
-    '''
+    
     # Run user's commands with intercept
     if host_check.check_intercept(original_env):
         LOG.info("  with intercept ...")
         original_command = command
-        command = "sudo intercept-build " + original_command
-        log_env = original_env
-    '''
-
-    intercept_build_executable = find_executable('intercept-build')
-
-    if intercept_build_executable != None:
-        LOG.info("  with intercept ...")
-        original_command = command
-        command = "sudo intercept-build " + original_command
+        if platform.system() == 'Linux':
+            command = "intercept-build " + original_command
+        elif platform.system() == 'Darwin':
+            command = "sudo intercept-build " + original_command
         log_env = original_env
 
     # Run user's commands in shell
